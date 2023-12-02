@@ -1,65 +1,66 @@
 To install Minikube and `kubectl` on an AWS Ubuntu instance, you can follow these steps:
 
-### Install `kubectl`
+### Installing kubectl
 
-1. **Update Apt Package List:**
-    ```bash
-    sudo apt-get update
-    ```
+1. **Update the package list:**
 
-2. **Install `kubectl`:**
-    ```bash
-    sudo apt-get install -y kubectl
-    ```
+```bash
+sudo apt-get update
+```
 
-3. **Verify Installation:**
-    ```bash
-    kubectl version --client
-    ```
+2. **Download and install kubectl:**
 
-### Install Minikube
+```bash
+sudo apt-get install -y apt-transport-https ca-certificates curl
 
-1. **Download Minikube Binary:**
-    ```bash
-    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-    ```
+# Download the latest release with the command:
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 
-2. **Make the Minikube Binary Executable:**
-    ```bash
-    sudo install minikube-linux-amd64 /usr/local/bin/minikube
-    ```
+# Validate the binary (optional)
 
-3. **Start Minikube:**
-    ```bash
-    minikube start --driver=docker
-    ```
-   Here, `--driver=docker` is used, but you can choose a different driver if you prefer (like VirtualBox or KVM). Ensure your AWS instance meets the requirements for the chosen driver.
+#Download the kubectl checksum file:
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
 
-4. **Verify Minikube Installation:**
-    ```bash
-    minikube status
-    ```
+# Validate the kubectl binary against the checksum file:
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
 
-### Additional Steps
+# If valid, the output is:
+kubectl: OK
+#If invalid, it will show a different hash in the output.
 
-Remember, Minikube requires a hypervisor or container runtime. If you encounter issues due to missing dependencies, you may need to install Docker or another hypervisor like VirtualBox or KVM, depending on the Minikube driver you choose.
+#Install kubectl
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
-For instance, to install Docker on Ubuntu:
+#Test to ensure the version you installed is up-to-date:
+kubectl version --client
+```
+### Installing Docker
+```bash
+sudo apt-get install -y docker.io
 
-1. **Update Apt Package List:**
-    ```bash
-    sudo apt-get update
-    ```
+#Start and Enable Docker Service:
+sudo systemctl start docker
+sudo systemctl enable docker
+#Add docker user to 
+sudo usermod -aG docker ubuntu
 
-2. **Install Docker:**
-    ```bash
-    sudo apt-get install -y docker.io
-    ```
+```
 
-3. **Start and Enable Docker Service:**
-    ```bash
-    sudo systemctl start docker
-    sudo systemctl enable docker
-    ```
 
-After completing these steps, you should have both `kubectl` and Minikube installed on your AWS Ubuntu instance, and you can start working with Kubernetes clusters using Minikube. Adjust configurations and settings as needed based on your specific requirements and environment.
+### Installing Minikube
+
+1. **Download the Minikube binary:**
+
+```bash
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+
+
+# Make the binary executable
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+```
+
+2. **Start Minikube:**
+
+```
+minikube start 
+```
